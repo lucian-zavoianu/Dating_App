@@ -42,6 +42,7 @@ namespace DatingApp.API
             });
             // Allow CORS ("*")
             services.AddCors();
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
             // Add AutoMapper
             services.AddAutoMapper();
             // Seed Database
