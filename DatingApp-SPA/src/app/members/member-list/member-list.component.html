@@ -4,7 +4,12 @@
 
 <div class="container mt-3">
   <div class="row">
-    <form class="form-inline mb-2" #form="ngForm" (ngSubmit)="loadUsers()" novalidate>
+    <form
+      class="form-inline mb-2"
+      #form="ngForm"
+      (ngSubmit)="loadUsers()"
+      novalidate
+    >
       <div class="form-group">
         <label for="minAge">Age From</label>
         <input
@@ -46,9 +51,40 @@
       <button type="submit" class="btn btn-primary" style="margin-left:10px">
         <i class="fa fa-check"></i>
       </button>
-      <button type="button" class="btn btn-info" (click)="resetFilters()" style="margin-left:10px">
+      <button
+        type="button"
+        class="btn btn-info"
+        (click)="resetFilters()"
+        style="margin-left:10px"
+      >
         <i class="fa fa-undo"></i>
       </button>
+
+      <div class="col">
+        <div class="btn-group float-right">
+          <button
+            type="button"
+            name="orderBy"
+            class="btn btn-primary"
+            [(ngModel)]="userParams.orderBy"
+            (click)="loadUsers()"
+            btnRadio="lastActive"
+          >
+            Last Active
+          </button>
+          
+          <button
+            type="button"
+            name="orderBy"
+            class="btn btn-primary"
+            [(ngModel)]="userParams.orderBy"
+            (click)="loadUsers()"
+            btnRadio="created"
+          >
+            Newest Members
+          </button>
+        </div>
+      </div>
     </form>
   </div>
 
