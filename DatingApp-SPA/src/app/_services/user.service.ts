@@ -100,6 +100,10 @@ export class UserService {
       })
     );
   }
+
+  getMessageThread(senderId: number, recipientId: number) {
+    return this.http.get<Message[]>(this.baseUrl + 'users/' + senderId + '/messages/thread/' + recipientId);
+  }
 }
 
 // ============================================================= //
