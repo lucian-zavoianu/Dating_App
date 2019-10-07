@@ -16,7 +16,7 @@
                 </span>
 
                 <span class="fa fa-clock-o text-muted">
-                  &nbsp;
+                  {{ !message.isRead ? 'Sent' : 'Read' }}
                   {{ !message.isRead ? (message.messageSent | timeAgo) : (message.dateRead | timeAgo) }}
                 </span>
               </div>
@@ -45,7 +45,7 @@
 
                 <span class="fa fa-clock-o text-muted">
                   &nbsp;
-                  {{ message.messageSent | timeAgo }}
+                  Received {{ message.messageSent | timeAgo }}
                 </span>
               </div>
             </div>

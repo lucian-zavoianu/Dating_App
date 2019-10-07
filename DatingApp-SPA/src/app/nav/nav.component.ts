@@ -27,7 +27,6 @@ export class NavComponent implements OnInit {
     }, () => {
       this.router.navigate(['/members']);
     });
-    console.log(this.model);
   }
 
   loggedIn() {
