@@ -87,12 +87,17 @@ namespace DatingApp.API.Controllers
             
             var like = await _repo.GetLike(userId, recipientId);
 
+            // Dislike user if already liked
             if (like != null)
-                return BadRequest("You already like this user!");
+            {
+                _repo.Delete<Like>(like);
+                return Ok();
+            }
 
             if (await _repo.GetUser(recipientId) == null)
                 return NotFound();
             
+            // Like user if not liked yet
             like = new Like
             {
                 LikerId = userId,
@@ -102,7 +107,7 @@ namespace DatingApp.API.Controllers
             _repo.Add<Like>(like);
 
             if (await _repo.SaveAll())
-                return Ok();
+                return Ok(like);
             
             return BadRequest("Failed to like user!");
         }
