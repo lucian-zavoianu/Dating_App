@@ -96,7 +96,21 @@ namespace DatingApp.API
             // CORS Policy
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseAuthentication();
-            app.UseMvc();
+            
+            // Looks for index.html in the content root path
+            app.UseDefaultFiles();
+
+            // Looks in wwwroot for the content inside there
+            app.UseStaticFiles();
+            
+            // Configuration for the Kestrel server to know what to do with routes that it doesn't know about (e.g. localhost:5000/members)
+            // This configuration just tells the API that if it doesn't find a route for one of our controller endpoints, then it's going to use the specified controller as a fallback ("Fallback") and use the action specified ("Index")
+            app.UseMvc(routes => {
+                routes.MapSpaFallbackRoute(
+                    name: "spa-fallback",
+                    defaults: new { controller = "Fallback", action = "Index" }
+                );
+            });
         }
     }
 }
