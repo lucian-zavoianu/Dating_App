@@ -65,7 +65,7 @@ namespace DatingApp.API.Controllers
             
             var messageFromRepo = await _repo.GetMessageThread(userId, recipientId);
 
-            var messageThread = Mapper.Map<IEnumerable<MessageToReturnDto>>(messageFromRepo);
+            var messageThread = _mapper.Map<IEnumerable<MessageToReturnDto>>(messageFromRepo);
 
             return Ok(messageThread);
         }

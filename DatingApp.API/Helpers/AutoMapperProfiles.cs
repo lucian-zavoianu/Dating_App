@@ -16,7 +16,7 @@ namespace DatingApp.API.Helpers
                 })
                 // This is to calculate the Age parameter from date of birth field @the user list
                 .ForMember(dest => dest.Age, opt => {
-                    opt.ResolveUsing(d => d.DateOfBirth.CalculateAge());
+                    opt.MapFrom(d => d.DateOfBirth.CalculateAge());
                 });
             CreateMap<User, UserForDetailDto>()
                 // This is to pass the PhotoUrl from the Photo object to the User object @the user details
@@ -25,7 +25,7 @@ namespace DatingApp.API.Helpers
                 })
                 // This is to calculate the Age parameter from date of birth field @the user details
                 .ForMember(dest => dest.Age, opt => {
-                    opt.ResolveUsing(d => d.DateOfBirth.CalculateAge());
+                    opt.MapFrom(d => d.DateOfBirth.CalculateAge());
                 });
             CreateMap<Photo, PhotosForDetailedDto>();
             CreateMap<UserForUpdateDto, User>();

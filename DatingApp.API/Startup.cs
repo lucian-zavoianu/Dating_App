@@ -64,7 +64,7 @@ namespace DatingApp.API
             services.AddCors();
             services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
             // Add AutoMapper
-            services.AddAutoMapper();
+            services.AddAutoMapper(typeof(DatingRepository).Assembly);
             // Seed Database
             services.AddTransient<Seed>();
             // Use the auth repo
@@ -84,7 +84,7 @@ namespace DatingApp.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, Seed seeder)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -109,9 +109,6 @@ namespace DatingApp.API
             }
 
             // app.UseHttpsRedirection();
-
-            // Seed Application (ran once, to have some data in dev mode)
-            // seeder.SeedUsers();
 
             // CORS Policy
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
