@@ -17,7 +17,7 @@ namespace DatingApp.API.Models
         // be the case with the EF automatically generated
         // UserId (when nothing is specified and IsMain
         // would be the last property)
-        public User User { get; set; }
+        public virtual User User { get; set; }
         public int UserId { get; set; }
     }
 }
