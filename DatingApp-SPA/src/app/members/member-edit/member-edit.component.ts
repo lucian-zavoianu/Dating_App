@@ -12,7 +12,7 @@ import { AuthService } from '../../_services/auth.service';
   styleUrls: ['./member-edit.component.css']
 })
 export class MemberEditComponent implements OnInit {
-  @ViewChild('editUser') editUser: NgForm;
+  @ViewChild('editUser', { static: true }) editUser: NgForm;
   user: User;
   photoUrl: string;
   // For notifications on browser/browser tab close

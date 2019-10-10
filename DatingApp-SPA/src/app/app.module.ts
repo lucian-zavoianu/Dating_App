@@ -39,6 +39,17 @@ export function tokenGetter() {
    return localStorage.getItem('token');
 }
 
+export class CustomHammerConfig extends HammerGestureConfig {
+   overrides = {
+      pinch: {
+         enable: false
+      },
+      rotate: {
+         enable: false
+      }
+   };
+}
+
 @NgModule({
    declarations: [
       AppComponent,
@@ -88,7 +99,11 @@ export function tokenGetter() {
       MemberEditResolver,
       PreventUnsavedChangesLoss,
       ListsResolver,
-      MessagesResolver
+      MessagesResolver,
+      {
+         provide: HAMMER_GESTURE_CONFIG,
+         useClass: CustomHammerConfig
+      }
    ],
    bootstrap: [
       AppComponent
