@@ -6,6 +6,7 @@ using DatingApp.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DatingApp.API.Controllers
 {
@@ -23,9 +24,26 @@ namespace DatingApp.API.Controllers
 
         [Authorize(Policy = "RequireAdminRole")]
         [HttpGet("usersWithRoles")]
-        public IActionResult GetUsersWithRoles()
+        public async Task<IActionResult> GetUsersWithRoles()
         {
-            return Ok("Only Admins can see this.");
+            var userList = await (
+                from user in _context.Users
+                orderby user.UserName
+                select new
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    Roles = (
+                        from userRole in user.UserRoles
+                        join role in _context.Roles
+                        on userRole.RoleId
+                        equals role.Id
+                        select role.Name
+                    ).ToList()
+                }
+            ).ToListAsync();
+
+            return Ok(userList);
         }
 
         [Authorize(Policy = "ModeratePhotoRole")]
