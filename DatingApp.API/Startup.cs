@@ -93,10 +93,6 @@ namespace DatingApp.API
             services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
             // Add AutoMapper
             services.AddAutoMapper(typeof(DatingRepository).Assembly);
-            // Seed Database
-            services.AddTransient<Seed>();
-            // Use the auth repo
-            services.AddScoped<IAuthRepository, AuthRepository>();
             // Use the dating repo
             services.AddScoped<IDatingRepository, DatingRepository>();
             services.AddScoped<LogUserActivity>();

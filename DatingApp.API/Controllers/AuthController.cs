@@ -27,45 +27,36 @@ namespace DatingApp.API.Controllers
 
     {
         private readonly IConfiguration _config;
-        private readonly IAuthRepository _repo;
         private readonly IMapper _mapper;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
-        public AuthController(IAuthRepository repo, IConfiguration config, IMapper mapper, UserManager<User> userManager, SignInManager<User> signInManager)
+        public AuthController(IConfiguration config, IMapper mapper, UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _config = config;
-            _repo = repo;
             _mapper = mapper;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody]UserToRegisterDto userToRegisterDto)
         {
-            // Validate Request
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            // User name conversion to lowercase, to avoid duplicates where
-            // the only difference might be a lowercase vs. uppercase letter
-            userToRegisterDto.Username = userToRegisterDto.Username.ToLower();
-
-            // Check if user exists
-            if (await _repo.UserExists(userToRegisterDto.Username))
-                return BadRequest("Username already exists!");
-
             var userToCreate = _mapper.Map<User>(userToRegisterDto);
 
-            var createdUser = await _repo.Register(userToCreate, userToRegisterDto.Password);
+            var result = await _userManager.CreateAsync(userToCreate, userToRegisterDto.Password);
 
-            var userToReturn = _mapper.Map<UserForDetailDto>(createdUser);
+            var userToReturn = _mapper.Map<UserForDetailDto>(userToCreate);
 
-            return CreatedAtRoute("GetUser", new
+            if (result.Succeeded)
             {
-                controller = "Users",
-                id = createdUser.Id
-            }, userToReturn);
+                return CreatedAtRoute("GetUser", new
+                {
+                    controller = "Users",
+                    id = userToCreate.Id
+                }, userToReturn);
+            }
+
+            return BadRequest(result.Errors);
         }
 
         [HttpPost("login")]
