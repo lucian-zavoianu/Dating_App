@@ -3,7 +3,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BsDropdownModule, TabsModule, BsDatepickerModule, PaginationModule, ButtonsModule } from 'ngx-bootstrap';
+import { BsDropdownModule, TabsModule, BsDatepickerModule, PaginationModule, ButtonsModule, ModalModule } from 'ngx-bootstrap';
 import { RouterModule } from '@angular/router';
 import { JwtModule } from '@auth0/angular-jwt';
 import { NgxGalleryModule } from 'ngx-gallery';
@@ -39,6 +39,7 @@ import { HasRoleDirective } from './_directives/hasRole.directive';
 import { UserManagementComponent } from './admin/user-management/user-management.component';
 import { AdminService } from './_services/admin.service';
 import { PhotoManagementComponent } from './admin/photo-management/photo-management.component';
+import { RolesModalComponent } from './admin/roles-modal/roles-modal.component';
 
 export function tokenGetter() {
    return localStorage.getItem('token');
@@ -73,7 +74,8 @@ export class CustomHammerConfig extends HammerGestureConfig {
       AdminPanelComponent,
       HasRoleDirective,
       UserManagementComponent,
-      PhotoManagementComponent
+      PhotoManagementComponent,
+      RolesModalComponent
    ],
    imports: [
       BrowserModule,
@@ -87,6 +89,7 @@ export class CustomHammerConfig extends HammerGestureConfig {
       TabsModule.forRoot(),
       ButtonsModule.forRoot(),
       RouterModule.forRoot(appRoutes),
+      ModalModule.forRoot(),
       NgxGalleryModule,
       FileUploadModule,
       JwtModule.forRoot({
@@ -114,6 +117,9 @@ export class CustomHammerConfig extends HammerGestureConfig {
          useClass: CustomHammerConfig
       },
       AdminService
+   ],
+   entryComponents: [
+      RolesModalComponent
    ],
    bootstrap: [
       AppComponent
