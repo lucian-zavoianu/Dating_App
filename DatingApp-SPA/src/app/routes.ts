@@ -63,7 +63,12 @@ export const appRoutes: Routes = [
             },
             {
                 path: 'admin',
-                component: AdminPanelComponent
+                component: AdminPanelComponent,
+                data: {
+                    roles: [
+                        'Admin', 'Moderator'
+                    ]
+                }
             }
         ]
     },
