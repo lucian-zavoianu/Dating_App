@@ -72,7 +72,7 @@ namespace DatingApp.API.Controllers
             // Create the claims
             var claims = new[] {
                 new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()),
-                new Claim(ClaimTypes.Name, userFromRepo.Username)
+                new Claim(ClaimTypes.Name, userFromRepo.UserName)
             };
 
             // In order to make sure that the token is valid when it comes back, the server needs to sign the token
