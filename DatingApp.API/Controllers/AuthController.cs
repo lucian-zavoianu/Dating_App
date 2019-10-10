@@ -8,6 +8,7 @@ using DatingApp.API.Data;
 using DatingApp.API.DTOs;
 using DatingApp.API.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -28,15 +29,20 @@ namespace DatingApp.API.Controllers
         private readonly IConfiguration _config;
         private readonly IAuthRepository _repo;
         private readonly IMapper _mapper;
-        public AuthController(IAuthRepository repo, IConfiguration config, IMapper mapper)
+        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
+        public AuthController(IAuthRepository repo, IConfiguration config, IMapper mapper, UserManager<User> userManager, SignInManager<User> signInManager)
         {
+            _userManager = userManager;
+            _signInManager = signInManager;
             _config = config;
             _repo = repo;
             _mapper = mapper;
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody]UserToRegisterDto userToRegisterDto) {
+        public async Task<IActionResult> Register([FromBody]UserToRegisterDto userToRegisterDto)
+        {
             // Validate Request
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -55,24 +61,41 @@ namespace DatingApp.API.Controllers
 
             var userToReturn = _mapper.Map<UserForDetailDto>(createdUser);
 
-            return CreatedAtRoute("GetUser", new {
+            return CreatedAtRoute("GetUser", new
+            {
                 controller = "Users",
                 id = createdUser.Id
             }, userToReturn);
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody]UserToLoginDto userToLoginDto) {
+        public async Task<IActionResult> Login([FromBody]UserToLoginDto userToLoginDto)
+        {
             // Check if user exists
-            var userFromRepo = await _repo.Login(userToLoginDto.Username.ToLower(), userToLoginDto.Password);
+            var user = await _userManager.FindByNameAsync(userToLoginDto.Username);
 
-            if (userFromRepo == null)
-                return Unauthorized();
-            
+            var result = await _signInManager.CheckPasswordSignInAsync(user, userToLoginDto.Password, false);
+
+            if (result.Succeeded)
+            {
+                var appuser = _mapper.Map<UserForListDto>(user);
+
+                return Ok(new
+                {
+                    token = GenerateJwtToken(user),
+                    user = appuser
+                });
+            }
+
+            return Unauthorized();
+        }
+
+        private string GenerateJwtToken(User user)
+        {
             // Create the claims
             var claims = new[] {
-                new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()),
-                new Claim(ClaimTypes.Name, userFromRepo.UserName)
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.UserName)
             };
 
             // In order to make sure that the token is valid when it comes back, the server needs to sign the token
@@ -83,7 +106,8 @@ namespace DatingApp.API.Controllers
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             // Start creating the token
-            var tokenDescriptor = new SecurityTokenDescriptor {
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.Now.AddDays(1),
                 SigningCredentials = credentials
@@ -93,12 +117,7 @@ namespace DatingApp.API.Controllers
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            var user = _mapper.Map<UserForListDto>(userFromRepo);
-
-            return Ok(new {
-                token = tokenHandler.WriteToken(token),
-                user
-            });
+            return tokenHandler.WriteToken(token);
         }
     }
 }
