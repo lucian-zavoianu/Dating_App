@@ -68,6 +68,8 @@ namespace DatingApp.API.Data
                 .WithMany(u => u.MessagesReceived)
                 // Prevents User Deletion via Cascading
                 .OnDelete(DeleteBehavior.Restrict);
+            
+            builder.Entity<Photo>().HasQueryFilter(p => p.IsApproved);
         }
     }
 }
